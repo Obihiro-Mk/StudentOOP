@@ -9,8 +9,16 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = []
     def __str__(self):
+        average_grade = round((sum(self.grades)) / len(self.grades), 1)
         return f'Имя: {self.name}\nФамилия: {self.surname}\n' \
-               f'Средняя оценка за лекции: {round((sum(self.grades)) / len(self.grades), 1)}'
+               f'Средняя оценка за лекции: {average_grade}'
+    def __lt__(self, other):
+        if not isinstance(other, Lecturer): # не понимаю как это тут работает, как обработать ошибки
+            print("Неверный лектор")
+        average_grade = round((sum(self.grades)) / len(self.grades), 1)
+        average_grade_other = round((sum(other.grades)) / len(other.grades), 1)
+        return (average_grade < average_grade_other)
+
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
@@ -55,6 +63,19 @@ class Student:
         return f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за домашнее задание: {average_grade}' \
                f'\nКурсы в процессе изучения: {progress_}\nЗавершенные курсы: {finished_}'
 
+    def __lt__(self, other):
+        total = []
+        for course, value_grade in self.grades.items():
+            total += value_grade
+        average_grade = round((sum(total)) / len(total), 1)
+        total_other = []
+        for course_other, value_grade_other in other.grades.items():
+            total_other += value_grade_other
+        average_grade_other = round((sum(total_other)) / len(total_other), 1)
+        if not isinstance(other, Student): # не понимаю как это тут работает, как обработать ошибки
+            print("Неверный студент")
+        return (average_grade < average_grade_other)
+
         # ошибка
         # print("Имя: ", self.name,
         #     "\nФамилия: ", self.surname,
@@ -63,36 +84,55 @@ class Student:
         #     "\nЗавершенные курсы: ", ", ".join(self.finished_courses))
 
 student_1 = Student('Ruoy', 'Eman', 'your_gender')
+student_1.finished_courses += ['Git']
+student_1.finished_courses += ['Введение в программирование']
 student_1.courses_in_progress += ['Python']
 student_1.courses_in_progress += ['Java']
+student_1.grades['Java'] = [10, 7]
+student_1.grades['Python'] = [10, 9]
+student_1.grades['Git'] = [10, 6 ]
+student_1.grades['Введение в программирование'] = [8, 7]
 
-cool_lecturer = Lecturer('Some', 'Buddy')
-cool_lecturer.courses_attached += ['Python']
+student_2 = Student('Petya', 'Ivanov', 'your_gender')
+student_2.finished_courses += ['Git']
+student_2.finished_courses += ['Введение в программирование']
+student_2.courses_in_progress += ['Python']
+student_2.courses_in_progress += ['Java']
+student_2.grades['Java'] = [10, 5]
+student_2.grades['Python'] = [10, 7]
+student_2.grades['Git'] = [9, 7]
+student_2.grades['Введение в программирование'] = [9, 7]
+
+lecturer_1 = Lecturer('Some', 'Buddy')
+lecturer_1.courses_attached += ['Python']
+lecturer_1.grades += [6, 10]
+
+lecturer_2 = Lecturer('Dima', 'Ivanov')
+lecturer_2.courses_attached += ['Java']
+lecturer_2.grades += [6, 8]
 
 reviewer_1 = Reviewer('Ronnie', 'Kirk')
 reviewer_1.courses_attached += ['Java']
-print(reviewer_1)
 
+reviewer_2 = Reviewer('Ben', 'West')
+reviewer_2.courses_attached += ['Python']
 
-student_1.rate_lw(cool_lecturer, 'Python', 9)
-student_1.rate_lw(cool_lecturer, 'Python', 10)
-student_1.rate_lw(cool_lecturer, 'Python', 5)
-student_1.rate_lw(cool_lecturer, 'Python', 10)
-print(cool_lecturer)
+student_1.rate_lw(lecturer_1, 'Python', 9)
+student_2.rate_lw(lecturer_2, 'Java', 10)
 
 reviewer_1.rate_hw(student_1, 'Java', 9)
-reviewer_1.rate_hw(student_1, 'Java', 10)
-reviewer_1.rate_hw(student_1, 'Java', 5)
-reviewer_1.rate_hw(student_1, 'Java', 3)
-print(student_1)
+reviewer_2.rate_hw(student_2, 'Python', 10)
 
-best_student = Student('Petya', 'Ivanov', 'your_gender')
-best_student.finished_courses += ['Git']
-best_student.finished_courses += ['Java']
-best_student.finished_courses += ['Введение в программирование']
-best_student.courses_in_progress += ['Python']
-best_student.courses_in_progress += ['Что-то']
-best_student.grades['Git'] = [10, 10, 3, 10, 5]
-best_student.grades['Python'] = [10, 7, 5, 6, 7]
-print(best_student)
+# print(student_1)
+# print(student_2)
+# print(lecturer_1)
+# print(lecturer_2)
+# print(reviewer_1)
+# print(reviewer_2)
+# print(student_1 > student_2)
+# print(lecturer_1 < lecturer_2)
+
+
+
+
 
